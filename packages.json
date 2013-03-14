@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.2",
+	"packages": [
+		{
+			"name": "Agilix XLI Template",
+			"description": "Compile and decompile default XLI templates",
+			"author": "Ryan Quinlan",
+			"homepage": "https://github.com/apex2060/xli-templateize",
+			"last_modified": "2013-03-14 16:01:00",
+			"platforms": {
+				"*": [
+					{
+						"version": "1.1.0",
+						"url": "https://nodeload.github.com/apex2060/xli-templateize"
+					}
+				]
+			}
+		}
+	]
+}
