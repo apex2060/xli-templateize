@@ -1,0 +1,24 @@
+[  
+{  
+    "id": "edit",  
+    "children":  
+    [  
+        {
+          "id": "XLI",
+        	"caption": "XLI",
+        	"children":
+        	[
+        		{
+	        		"id": "de_templateize",
+	        		"command": "de_templateize",
+	        		"caption": "Convert From Template"
+        		},{
+	        		"id": "templateize",
+	        		"command": "templateize",
+	        		"caption": "Convert To Template"
+        		}
+        	]
+        }
+    ]
+}
+]
