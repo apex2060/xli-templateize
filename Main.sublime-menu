@@ -4,7 +4,7 @@
     "children":  
     [  
         {
-          "id": "XLI",
+        	"id": "XLI",
         	"caption": "XLI",
         	"children":
         	[
@@ -13,6 +13,14 @@
 	        		"command": "de_templateize",
 	        		"caption": "Convert From Template"
         		},{
+                    "id": "extract",
+                    "command": "extract_more",
+                    "caption": "Extract More"
+                },{
+                    "id": "combine",
+                    "command": "re_combine",
+                    "caption": "Re Combine"
+                },{
 	        		"id": "templateize",
 	        		"command": "templateize",
 	        		"caption": "Convert To Template"
