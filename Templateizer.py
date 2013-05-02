@@ -5,23 +5,64 @@ now = datetime.datetime.now()
 class TemplateizeCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
 		s=self.view.substr(sublime.Region(0, self.view.size()))
-		region = sublime.Region(0, self.view.size())
-		self.view.erase(edit, region)
+		if s.count('\u003c') < 1:
+			region = sublime.Region(0, self.view.size())
+			self.view.erase(edit, region)
+			oldVar = s.split('![')
+			if len(oldVar) > 1:
+				oldVar = oldVar[1].split(']!')
+				if len(oldVar)==2:
+					oldVar=oldVar[0]
+				else:
+					oldVar='newTemplate'
 
-		s=s.replace('\\', '\\\\')
-		s=s.replace('\'', '\\\'')
-		s=s.replace('\"', '\\\"')
-		s=s.replace('<', '\u003c')
-		s=s.replace('>', '\u003e')
-		s=s.replace('\n', '\\n')
+			s=s.split('*!*/\n')[1];
+			s=s.split('\n/*!*')[0];
+			s=s.replace('\\', '\\\\')
+			s=s.replace('\'', '\\\'')
+			s=s.replace('\"', '\\\"')
+			s=s.replace('<', '\u003c')
+			s=s.replace('>', '\u003e')
+			s=s.replace('\n', '\\n')
 
-		o='\n/****************************** NEW TEMPLATE ******************************/';
-		o+='\n/********** \tCOMPILED ON: \t'+str(now)+' \t\t **********/';
-		o+='\nnewTemplate = \''+s+'\';';
-		o+='\n/****************************** END TEMPLATE ******************************/';
-		self.view.insert(edit, self.view.size(), o)
+			o='\n/******************************* NEW TEMPLATE ******************************/';
+			o+='\n/********** \tCOMPILED ON: \t'+str(now)+' \t\t ***********/';
+			o+='\nvar '+oldVar+' = \''+s+'\';';
+			o+='\n/****************************** END TEMPLATE *******************************/';
+			self.view.insert(edit, self.view.size(), o)
+		else:
+			region = sublime.Region(0, self.view.size())
+			self.view.erase(edit, region)
 
+			arr = s.split(' = \'')
+			if len(arr)==2:
+				oldVar = arr[0].split('var ')[1]
+				s = arr[1].split('\';')[0]
+			else:
+				arr = s.split(' = \"')
+				if len(arr)==2:
+					oldVar = arr[0].split('var ')[1]
+					s = arr[1].split('\";')[0]
+				else:
+					oldVar = 'oldTemplate'
+					if s[-2:] == '\';' or s[-2:] == '\";':
+						s=s[1:]
+						s=s[:-2]
+			
+			s=s.replace('\\n', '\n')
+			s=s.replace('\u003e', '>')
+			s=s.replace('\u003c', '<')
+			s=s.replace('\\\"', '\"')
+			s=s.replace('\\\'', '\'')
+			s=s.replace('\\\\', '\\')
 
+			o='\n/****************************** OLD TEMPLATE ******************************/';
+			o+='\n/********** \tDE-COMPILED ON: \t'+str(now)+' \t **********/';
+			o+='\n/********** \t\t\t FROM VARIABLE:  !['+oldVar+']! \t\t\t ********!*/';
+			o+='\n'+s;
+			o+='\n/*!*************************** OLD TEMPLATE *******************************/';
+			o+='\n/********* NOTE: Remove comments before compiling as a template. **********/';
+			self.view.insert(edit, self.view.size(), o)
 
 class DeTemplateizeCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
@@ -29,6 +70,16 @@ class DeTemplateizeCommand(sublime_plugin.TextCommand):
 		region = sublime.Region(0, self.view.size())
 		self.view.erase(edit, region)
 
+		arr = s.split(' = \'')
+		if len(arr)==2:
+			oldVar = arr[0].split('var ')[1]
+			s = arr[1].split('\';')[0]
+		else:
+			arr = s.split(' = \'')
+			if len(arr)==2:
+				oldVar = arr[0].split('var ')[1]
+				s = arr[1].split('\";')[0]
+		
 		s=s.replace('\\n', '\n')
 		s=s.replace('\u003e', '>')
 		s=s.replace('\u003c', '<')
@@ -38,8 +89,9 @@ class DeTemplateizeCommand(sublime_plugin.TextCommand):
 
 		o='\n/****************************** OLD TEMPLATE ******************************/';
 		o+='\n/********** \tDE-COMPILED ON: \t'+str(now)+' \t **********/';
+		o+='\n/********** \t\t\t FROM VARIABLE:  !['+oldVar+']! \t\t\t ********!*/';
 		o+='\n'+s;
-		o+='\n/***************************** OLD TEMPLATE ******************************/';
+		o+='\n/*!*************************** OLD TEMPLATE ******************************/';
 		o+='\n/********* NOTE: Remove comments before compiling as a template. *********/';
 		self.view.insert(edit, self.view.size(), o)
 
